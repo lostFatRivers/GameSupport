@@ -7,7 +7,7 @@ import os
 ################################## 路径配置 ##################################
 
 excelPath = './excel'
-jsonPath = './excel'
+jsonPath = './json'
 isRelease = False
 
 #############################################################################
@@ -24,14 +24,34 @@ def loadCfgToJson(filePath, targetPath, release):
     for i in range(1, mainSheet.nrows):
         cfgDataList.append(assembleRow(excelObject, mainSheet.row_values(i), 'model'))
     
-    with open(targetPath, "w") as fp:
-        if (release):
-            fp.write(json.dumps(cfgDataList))
-        else:
-            fp.write(json.dumps(cfgDataList, indent=4))
-    
+    writeToJsonFile(cfgDataList, targetPath, release)
     print("============= Load [" + filePath + "] Success =============")
 
+
+# 特殊数据表, 例如 GameParams
+def loadSpecialCfgToJson(filePath, targetPath, release):
+    excelObject = xlrd.open_workbook(filePath)
+    # 表数据
+    mainSheet = excelObject.sheet_by_name('main')
+
+    cfgData = {}
+    for j in range(1, mainSheet.nrows):
+        fieldName = mainSheet.cell_value(j, 0)
+        fieldType = mainSheet.cell_value(j, 1)
+        fieldValue = mainSheet.cell_value(j, 2)
+        cfgData[fieldName] = cellTrueValue(excelObject, fieldType, fieldValue)
+
+    writeToJsonFile(cfgData, targetPath, release)
+    print("============= Load [" + filePath + "] Success =============")
+
+
+# 写入json文件
+def writeToJsonFile(contentStr, targetPath, release):
+    with open(targetPath, "w") as fp:
+        if (release):
+            fp.write(json.dumps(contentStr))
+        else:
+            fp.write(json.dumps(contentStr, indent=4))
 
 
 # 单行解析, 返回该行的解析对象
@@ -62,6 +82,9 @@ def cellTrueValue(excelObject, valueType, cellValue):
     if (valueType == "int"):
         # 整数类型
         realResultValue = int(cellValue)
+    elif (valueType == "float"):
+        # 小数类型
+        realResultValue = float(cellValue)
     elif (valueType == "string"):
         # 字符串类型
         realResultValue = str(cellValue)
@@ -87,7 +110,10 @@ def generateJsonConfig(excelPath, jsonPath, isRelease):
                 continue
             nameSplits = f.split('.')
             targetJsonName = nameSplits[0] + '.json'
-            loadCfgToJson(os.path.join(root, f), os.path.join(jsonPath, targetJsonName), isRelease)
+            if (nameSplits[0] == "GameParams"):
+                loadSpecialCfgToJson(os.path.join(root, f), os.path.join(jsonPath, targetJsonName), isRelease)
+            else:
+                loadCfgToJson(os.path.join(root, f), os.path.join(jsonPath, targetJsonName), isRelease)
 
 
 # loadCfgToJson('F:/Workspace/script/python/MonsterModel.xls', 'F:/Workspace/script/python/MonsterModel.json', True)

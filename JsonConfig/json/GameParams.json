@@ -1,0 +1,5 @@
+{
+    "slowRatio": 60,
+    "burnDamageRatio": 60,
+    "poisonDamageRatio": 80
+}
