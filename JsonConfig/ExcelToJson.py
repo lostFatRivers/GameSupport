@@ -6,8 +6,12 @@ import os
 
 ################################## 路径配置 ##################################
 
-excelPath = './excel'
-jsonPath = './json'
+excelPath = 'F:/workspace/Joker/github/GameSupport/JsonConfig/excel'
+jsonPath = 'F:/workspace/Joker/github/CatanServer/Catan/src/main/resources/json'
+
+classPath = "F:/workspace/Joker/github/CatanServer/Catan/src/main/java/com/jokerbee/template"
+javaPackage = "com.jokerbee.template"
+
 isRelease = False
 
 #############################################################################
@@ -88,6 +92,13 @@ def cellTrueValue(excelObject, valueType, cellValue):
     elif (valueType == "string"):
         # 字符串类型
         realResultValue = str(cellValue)
+    elif (valueType == "list<int>" or valueType == "list<float>" or valueType == "list<string>"):
+        # 基础数据数组类型
+        realResultValue = []
+        secondCellValueType = valueType[5:-1]
+        cellValueSplit = cellValue[1:-1].split(",")
+        for eachSplitValue in cellValueSplit:
+            realResultValue.append(cellTrueValue(excelObject, secondCellValueType, eachSplitValue))
     elif (valueType.startswith("list")):
         # 数组类型
         realResultValue = []
@@ -114,8 +125,36 @@ def generateJsonConfig(excelPath, jsonPath, isRelease):
                 loadSpecialCfgToJson(os.path.join(root, f), os.path.join(jsonPath, targetJsonName), isRelease)
             else:
                 loadCfgToJson(os.path.join(root, f), os.path.join(jsonPath, targetJsonName), isRelease)
+        
+        for d in dirs:
+            print("dirs: " + str(d))
 
+
+# 替换文件整行函数
+def replaceLine(filePath, matchText, replaceText):
+    print("replaceFile: " + filePath)
+    outLines = []
+    readF = open(filePath, "r+", encoding='utf-8')
+    for eachLine in readF.readlines():
+        newLine = eachLine
+        if matchText in eachLine:
+            newLine = replaceText + "\n"
+        outLines.append(newLine)
+    readF.close()
+
+    writeF = open(filePath,'w', encoding='utf-8')
+    writeF.writelines(outLines)
+    writeF.close()
+
+# 生成 java 文件
+def generateJavaFile():
+    replaceLine("./tools/tools.conf", "excelPath:", "    excelPath: \"" + excelPath + "\",")
+    replaceLine("./tools/tools.conf", "classPath:", "    classPath: \"" + classPath + "\",")
+    replaceLine("./tools/tools.conf", "javaPackage:", "    javaPackage: \""+ javaPackage + "\"")
+    os.chdir("./tools")
+    os.system("java -jar boot-1.0.1.jar")
 
 # loadCfgToJson('F:/Workspace/script/python/MonsterModel.xls', 'F:/Workspace/script/python/MonsterModel.json', True)
 
 generateJsonConfig(excelPath, jsonPath, isRelease)
+generateJavaFile()
