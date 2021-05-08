@@ -7,9 +7,9 @@ import os
 ################################## 路径配置 ##################################
 
 excelPath = 'F:/workspace/Joker/github/GameSupport/JsonConfig/excel'
-jsonPath = 'F:/workspace/Joker/github/CatanServer/Catan/src/main/resources/json'
+jsonPath = 'F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/resources/json'
 
-classPath = "F:/workspace/Joker/github/CatanServer/Catan/src/main/java/com/jokerbee/template"
+classPath = "F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/java/com/jokerbee/template"
 javaPackage = "com.jokerbee.template"
 
 isRelease = False
@@ -51,11 +51,11 @@ def loadSpecialCfgToJson(filePath, targetPath, release):
 
 # 写入json文件
 def writeToJsonFile(contentStr, targetPath, release):
-    with open(targetPath, "w") as fp:
+    with open(targetPath, "w", encoding='utf-8') as fp:
         if (release):
             fp.write(json.dumps(contentStr))
         else:
-            fp.write(json.dumps(contentStr, indent=4))
+            fp.write(json.dumps(contentStr, indent=4, ensure_ascii=False))
 
 
 # 单行解析, 返回该行的解析对象
@@ -98,6 +98,8 @@ def cellTrueValue(excelObject, valueType, cellValue):
         secondCellValueType = valueType[5:-1]
         cellValueSplit = cellValue[1:-1].split(",")
         for eachSplitValue in cellValueSplit:
+            if (eachSplitValue == ""):
+                continue
             realResultValue.append(cellTrueValue(excelObject, secondCellValueType, eachSplitValue))
     elif (valueType.startswith("list")):
         # 数组类型
@@ -105,6 +107,8 @@ def cellTrueValue(excelObject, valueType, cellValue):
         secondCellValueType = valueType[5:-1]
         cellValueSplit = cellValue[2:-2].split("><")
         for eachSplitValue in cellValueSplit:
+            if (eachSplitValue == ""):
+                continue
             realResultValue.append(cellTrueValue(excelObject, secondCellValueType, eachSplitValue))
     else:
         # 对象类型, 类型信息在其他sheet
