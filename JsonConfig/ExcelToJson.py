@@ -14,7 +14,7 @@ javaClassPath = "F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/j
 javaPackage = "com.jokerbee.template"
 
 cSharpClassPath = "F:/workspace/Joker/unity/Catan/Assets/Script/template"
-cSharpJsonPath = "F:/workspace/Joker/unity/Catan/Assets/Script/template/json"
+cSharpJsonPath = "F:/workspace/Joker/unity/Catan/Assets/Resources/json"
 
 isRelease = False
 
