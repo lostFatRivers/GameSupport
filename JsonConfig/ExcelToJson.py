@@ -2,6 +2,7 @@
 import xlrd
 import json
 import os
+import shutil
 
 
 ################################## 路径配置 ##################################
@@ -9,8 +10,11 @@ import os
 excelPath = 'F:/workspace/Joker/github/GameSupport/JsonConfig/excel'
 jsonPath = 'F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/resources/json'
 
-classPath = "F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/java/com/jokerbee/template"
+javaClassPath = "F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/java/com/jokerbee/template"
 javaPackage = "com.jokerbee.template"
+
+cSharpClassPath = "F:/workspace/Joker/unity/Catan/Assets/Script/template"
+cSharpJsonPath = "F:/workspace/Joker/unity/Catan/Assets/Script/template/json"
 
 isRelease = False
 
@@ -150,15 +154,28 @@ def replaceLine(filePath, matchText, replaceText):
     writeF.writelines(outLines)
     writeF.close()
 
-# 生成 java 文件
-def generateJavaFile():
+# 生成 java 文件和 c# 文件
+def generateClassFile():
     replaceLine("./tools/tools.conf", "excelPath:", "    excelPath: \"" + excelPath + "\",")
-    replaceLine("./tools/tools.conf", "classPath:", "    classPath: \"" + classPath + "\",")
+    replaceLine("./tools/tools.conf", "javaClassPath:", "    javaClassPath: \"" + javaClassPath + "\",")
     replaceLine("./tools/tools.conf", "javaPackage:", "    javaPackage: \""+ javaPackage + "\"")
+    replaceLine("./tools/tools.conf", "cSharpClassPath:", "    cSharpClassPath: \""+ cSharpClassPath + "\"")
     os.chdir("./tools")
     os.system("java -jar boot-1.0.1.jar")
 
-# loadCfgToJson('F:/Workspace/script/python/MonsterModel.xls', 'F:/Workspace/script/python/MonsterModel.json', True)
+# 拷贝一份 json 文件到 c# 工程中
+def copyJsonToCSharpProject():
+    try:
+        shutil.rmtree(cSharpJsonPath)
+    except:
+        print("删除旧 res 失败.")
+    shutil.copytree(jsonPath, cSharpJsonPath)
+
+
+
+
+#################################### 调用 ####################################
 
 generateJsonConfig(excelPath, jsonPath, isRelease)
-generateJavaFile()
+generateClassFile()
+copyJsonToCSharpProject()

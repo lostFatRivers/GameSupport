@@ -7,8 +7,8 @@ import ${eachPackage};
 </#if>
 
 /**
- * ==================================
- * = auto generated, do not modify! =
+ * ==================================<br/>
+ * = auto generated, do not modify! =<br/>
  * ==================================
  */
 public class ${className} {
