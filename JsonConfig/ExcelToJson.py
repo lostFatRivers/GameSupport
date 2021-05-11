@@ -13,8 +13,8 @@ jsonPath = 'F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/resour
 javaClassPath = "F:/workspace/Joker/github/ClusterServer/Ares/Support/src/main/java/com/jokerbee/template"
 javaPackage = "com.jokerbee.template"
 
-cSharpClassPath = "F:/workspace/Joker/unity/Catan/Assets/Script/template"
-cSharpJsonPath = "F:/workspace/Joker/unity/Catan/Assets/Resources/json"
+cSharpClassPath = "F:/workspace/Joker/github/ClusterServer/Catan/Assets/Script/template"
+cSharpJsonPath = "F:/workspace/Joker/github/ClusterServer/Catan/Assets/Resources/json"
 
 isRelease = False
 
@@ -165,13 +165,15 @@ def generateClassFile():
 
 # 拷贝一份 json 文件到 c# 工程中
 def copyJsonToCSharpProject():
-    try:
-        shutil.rmtree(cSharpJsonPath)
-    except:
-        print("删除旧 res 失败.")
-    shutil.copytree(jsonPath, cSharpJsonPath)
-
-
+    for root, dirs, files in os.walk(jsonPath):
+        for f in files:
+            if not f.endswith('.json'):
+                continue
+            eachJsonFile = jsonPath +"/" + f
+            cSharpJsonFile = cSharpJsonPath + "/" + f
+            if(os.path.exists(cSharpJsonFile)):
+                os.remove(cSharpJsonFile)
+            shutil.copy(eachJsonFile, cSharpJsonFile)
 
 
 #################################### 调用 ####################################
