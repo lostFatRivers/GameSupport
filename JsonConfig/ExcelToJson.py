@@ -161,7 +161,7 @@ def generateClassFile():
     replaceLine("./tools/tools.conf", "javaPackage:", "    javaPackage: \""+ javaPackage + "\"")
     replaceLine("./tools/tools.conf", "cSharpClassPath:", "    cSharpClassPath: \""+ cSharpClassPath + "\"")
     os.chdir("./tools")
-    os.system("java -jar boot-1.0.1.jar")
+    os.system("D:/Program/java/jdk-15/bin/java -jar boot-1.0.1.jar")
 
 # 拷贝一份 json 文件到 c# 工程中
 def copyJsonToCSharpProject():
